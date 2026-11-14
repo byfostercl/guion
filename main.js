@@ -614,3 +614,111 @@
   // Keep bookmark UI synchronized as the reading point advances.
   addEventListener('scroll',()=>requestAnimationFrame(refreshBookmark),{passive:true});
 })();
+
+/*
+ * GUIONES VERTICALES — EXTENSIÓN DE NAVEGACIÓN
+ * Compatible con el main.js original.
+ * No modifica los controles existentes.
+ */
+
+(() => {
+  'use strict';
+
+  const toc = document.getElementById('toc');
+
+  if (!toc || !document.getElementById('verticales')) {
+    return;
+  }
+
+  const entries = [
+    [
+      'verticales',
+      'GUION LANZAMIENTO STORIES',
+      1
+    ],
+    [
+      'vertical-ver-01',
+      'VER-01 · Presentación y lanzamiento',
+      2
+    ],
+    [
+      'vertical-ver-02',
+      'VER-02 · Qué hago como desarrollador',
+      2
+    ],
+    [
+      'vertical-ver-03',
+      'VER-03 · El ejemplo de los 52 informes',
+      2
+    ],
+    [
+      'vertical-ver-04',
+      'VER-04 · Presentación personal',
+      2
+    ]
+  ];
+
+  // Incorporar las nuevas secciones al índice lateral.
+
+  for (const [id, title, depth] of entries) {
+
+    if (toc.querySelector('[data-target="' + id + '"]')) {
+      continue;
+    }
+
+    const link = document.createElement('a');
+
+    link.href = '#' + id;
+    link.className = 'toc-link depth-' + depth;
+    link.dataset.target = id;
+
+    link.innerHTML =
+      '<span class="toc-dot"></span><span></span>';
+
+    link.lastElementChild.textContent = title;
+
+    link.addEventListener('click', () => {
+      document.body.classList.remove('nav-open');
+
+      document
+        .getElementById('menuToggle')
+        ?.setAttribute('aria-expanded', 'false');
+    });
+
+    toc.appendChild(link);
+  }
+
+  // Actualizar la cantidad de puntos del índice.
+
+  const tocCount = document.getElementById('tocCount');
+
+  if (tocCount) {
+    tocCount.textContent =
+      toc.querySelectorAll('.toc-link').length + ' puntos';
+  }
+
+  // Agregar acceso directo desde la portada.
+
+  const actions = document.querySelector('.intro-actions');
+
+  if (
+    actions &&
+    !actions.querySelector('[href="#verticales"]')
+  ) {
+
+    const link = document.createElement('a');
+
+    link.href = '#verticales';
+    link.className = 'secondary-action vertical-jump';
+
+    link.textContent = 'Ir a guiones verticales';
+
+    link.style.cssText =
+      'display:inline-flex;' +
+      'align-items:center;' +
+      'justify-content:center;';
+
+    actions.appendChild(link);
+  }
+
+})();
